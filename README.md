@@ -46,7 +46,7 @@ To stop: PAUSE. To recreate a queue with a new message: PAUSE, clear, create. Do
 
 ```bash
 pip install -r requirements-dev.txt
-pytest -q
+PYTHONPATH=. pytest -q
 ```
 
 The unit tests use a fake provider and do not send Rubika messages. Actual end-to-end provider test must be performed with your own logged-in account and a consenting test recipient.
