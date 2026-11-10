@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>روبیکا آنلاین | صف حساب شخصی</title>
+<style>
+:root{font-family:Tahoma,Arial,sans-serif;color:#182637;background:#f3f7fb}*{box-sizing:border-box}
+body{margin:0}.wrap{max-width:1140px;margin:0 auto;padding:28px 16px 60px}
+header{background:linear-gradient(110deg,#103a5c,#12688b);color:white;padding:36px 22px;border-radius:22px;margin-bottom:22px}
+h1{margin:0 0 10px;font-size:29px}header p{color:#d8eaf5;line-height:1.9;margin:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:18px}
+.card{background:white;border-radius:18px;padding:23px;box-shadow:0 4px 22px #1232 0;box-shadow:0 6px 28px rgba(18,40,65,.065);margin-bottom:18px}
+h2{font-size:19px;margin:0 0 18px}label{font-size:13px;font-weight:bold;display:block;margin-bottom:12px;color:#34465c}
+input,textarea{font:inherit;width:100%;padding:12px;margin-top:7px;border:1px solid #cbd5df;border-radius:10px;background:#f9fbfd;color:#182637}
+textarea{height:125px;resize:vertical}.btnrow{display:flex;gap:9px;flex-wrap:wrap}button,.button{padding:11px 16px;border:0;border-radius:10px;background:#09699e;color:white;cursor:pointer;font:inherit;font-size:14px}
+button:disabled{opacity:.5;cursor:not-allowed}.muted{background:#e8eff5;color:#234359}.warn{background:#ad3d37}.ok{color:#116a38}.error{color:#b92f38}.small{font-size:12px;line-height:1.9;color:#63758b}.status{background:#e8f4fc;padding:11px 13px;border-radius:12px;margin:15px 0;min-height:48px;white-space:pre-wrap;overflow-wrap:anywhere}
+.checkbox{display:flex;gap:10px;align-items:flex-start;line-height:1.8}.checkbox input{width:18px;margin:6px 0 0}
+.summary{display:flex;gap:12px;flex-wrap:wrap}.summary span{background:#edf5fb;padding:10px;border-radius:10px;min-width:105px}
+.tablewrap{overflow:auto;max-height:420px}table{border-collapse:collapse;width:100%;font-size:13px;white-space:nowrap}td,th{text-align:right;padding:11px;border-bottom:1px solid #ecf0f4}thead{background:#eef5fb;position:sticky;top:0}
+@media(max-width:500px){h1{font-size:23px}.card{padding:16px}.wrap{padding:16px 10px}}
+</style></head><body>
+<div class="wrap"><header><h1>پنل مستقل روبیکا آنلاین</h1><p>ورود با حساب شخصی | شماره + کد تایید | Excel/CSV | صف پایدار | زمان‌بندی | گزارش پاسخ سرور</p></header>
+<div class="card"><h2>ورود مدیر پنل</h2><label>رمز پنل که در ADMIN_TOKEN سرور تنظیم کرده‌اید<input id="token" type="password" placeholder="رمز مدیریت پنل" autocomplete="off"></label><div class="btnrow"><button id="saveToken">ورود به پنل</button><button id="refresh" class="muted">تازه‌سازی وضعیت</button></div><div id="notification" class="status">رمز پنل را وارد کنید.</div><div class="summary" id="summary"></div></div>
+<div class="grid">
+<section class="card"><h2>۱. ورود به حساب شخصی روبیکا</h2>
+<label>شماره موبایل روبیکا<input id="phone" placeholder="09123456789" inputmode="tel"></label>
+<label>رمز دوم (فقط اگر روبیکا درخواست کرد)<input id="pass" type="password" autocomplete="off"></label>
+<div class="btnrow"><button id="sendCode">دریافت کد</button><button class="muted" id="checkSession">بررسی زنده اتصال</button></div>
+<label>کد ورود دریافت‌شده<input id="code" inputmode="numeric" autocomplete="one-time-code" placeholder="کد پیامک"></label>
+<button id="verify">تأیید کد و اتصال</button><p class="small">کد ورود فقط برای ورود به حساب خودتان استفاده می‌شود. نشست حساب صرفاً روی سرور شخصی ذخیره می‌شود؛ هرگز فایل نشست را در GitHub عمومی قرار ندهید.</p></section>
+<section class="card"><h2>۲. واردکردن مخاطبان Excel</h2>
+<label>فایل XLSX یا CSV<input id="file" type="file" accept=".xlsx,.csv"></label>
+<div class="btnrow"><button id="import">بارگذاری فایل</button><button id="template" class="muted">دانلود فایل نمونه CSV</button></div>
+<p class="small">ستون‌ها: <b>phone,name,consent</b>، برای هر ردیف باید رضایت گیرنده <b>بله</b> ثبت شده باشد. شماره‌های تکراری حذف می‌شوند. هیچ شماره‌ای بدون رضایت وارد صف نمی‌شود.</p></section></div>
+<div class="card"><h2>۳. متن و زمان‌بندی صف</h2>
+<label>متن پیام<textarea id="message" placeholder="متن پیام به مخاطبان مجاز"></textarea></label>
+<div class="grid"><label>تاریخ و ساعت شروع (محلی)<input type="datetime-local" id="startAt"></label><label>فاصله هر ارسال (ثانیه، حداقل ۶۰)<input type="number" id="interval" min="60" max="86400" value="120"></label></div>
+<label class="checkbox"><input type="checkbox" id="addContacts"><span>اگر شماره در مخاطبان موجود نبود، اجازه می‌دهم آن را برای شناسایی در دفترچه مخاطبان حساب روبیکای خود اضافه کند. این عمل اطلاعات تماس را به روبیکا می‌فرستد.</span></label>
+<div class="btnrow"><button id="build">ایجاد صف از مخاطبان دارای رضایت</button><button id="start" style="background:#147c51">START</button><button id="pause" class="warn">PAUSE</button><button id="clear" class="muted">پاک‌کردن صف (پس از توقف)</button><button id="export" class="muted">دانلود گزارش</button></div>
+<p class="small">«sent» به معنی پذیرش توسط سرور همراه با شناسه پیام است، نه تحویل یا خواندن. در پاسخ‌های مبهم، صف آن مورد را برای بررسی دستی نگه می‌دارد و خودکار تکرار نمی‌کند.</p></div>
+<div class="card"><h2>۴. سابقه عملیات صف</h2><div class="tablewrap"><table><thead><tr><th>شناسه</th><th>شماره</th><th>نام</th><th>وضعیت</th><th>موعد</th><th>شناسه پیام</th><th>خطا</th></tr></thead><tbody id="jobs"></tbody></table></div></div>
+<footer class="small">نسخه 1.0 | ارتباط حساب شخصی از طریق کتابخانه متن‌باز Rubpy | این سرویس رسمی روبیکا نیست.</footer></div>
+<script>
+const $=id=>document.getElementById(id);
+const notify=(message,fail=false)=>{ $('notification').textContent=message; $('notification').className='status '+(fail?'error':''); };
+const token=()=>sessionStorage.getItem('rubika_admin_token')||'';
+async function api(path,options={}){
+ const response=await fetch(path,{...options,headers:{Authorization:'Bearer '+token(),...(options.headers||{})},cache:'no-store'});
+ let data;try{data=await response.json();}catch{data={detail:'پاسخ قابل خواندن از سرور دریافت نشد'};}
+ if(!response.ok)throw Error(data.detail||'خطای سرور '+response.status);
+ return data;
+}
+async function run(fn){try{await fn();}catch(e){notify(e.message,true);}}
+async function json(path,obj){return api(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(obj||{})});}
+async function report(){const s=await api('/api/status');$('summary').replaceChildren();
+for(const [title,value] of Object.entries({'اتصال حساب':s.verified?'تأیید شده':'تأیید نشده','وضعیت صف':s.running?'در حال اجرا':'متوقف','کل مخاطبان':s.total_contacts,'با رضایت':s.consenting_contacts,...s.counts})){
+ const el=document.createElement('span');el.textContent=title+': '+value;$('summary').appendChild(el);}
+const j=await api('/api/jobs');$('jobs').replaceChildren();
+for(const row of j.jobs){const tr=document.createElement('tr');for(const key of ['id','phone','name','status','due_at','message_id','last_error']){
+const td=document.createElement('td');let val=row[key]??'';if(key==='due_at')val=new Date(val*1000).toLocaleString('fa-IR');td.textContent=val;tr.appendChild(td);}$('jobs').appendChild(tr);}}
+$('saveToken').onclick=()=>run(async()=>{sessionStorage.setItem('rubika_admin_token',$('token').value);await report();notify('پنل مدیریت متصل شد.');});
+$('refresh').onclick=()=>run(async()=>{await report();notify('وضعیت به‌روزرسانی شد.');});
+$('sendCode').onclick=()=>run(async()=>{const r=await json('/api/auth/request',{phone:$('phone').value,password:$('pass').value||null});notify(r.state==='password_required'?'رمز دوم حساب لازم است. راهنمای روبیکا: '+r.hint:'درخواست کد توسط API روبیکا پذیرفته شد. کد را در قسمت پایین وارد کنید.');});
+$('verify').onclick=()=>run(async()=>{const r=await json('/api/auth/verify',{code:$('code').value});$('code').value='';$('pass').value='';notify('ورود ثبت شد. شناسه: '+r.guid);await report();});
+$('checkSession').onclick=()=>run(async()=>{const r=await json('/api/auth/check');notify('اتصال زنده تأیید شد. شناسه حساب: '+r.guid);await report();});
+$('import').onclick=()=>run(async()=>{const file=$('file').files[0];if(!file)throw Error('فایل انتخاب نشده است');const form=new FormData();form.append('file',file);const r=await api('/api/contacts/import',{method:'POST',body:form});notify('تعداد ثبت‌شده: '+r.imported+' | دارای رضایت: '+r.consenting);await report();});
+$('build').onclick=()=>run(async()=>{const local=$('startAt').value;if(!local)throw Error('زمان شروع را انتخاب کنید');const date=new Date(local);if(!Number.isFinite(date.getTime()))throw Error('تاریخ معتبر نیست');const r=await json('/api/queue/build',{message:$('message').value,interval_seconds:Number($('interval').value),start_at:date.toISOString(),allow_add_contacts:$('addContacts').checked});notify(r.queued+' پیام به صف اضافه شد. ابتدا START را بزنید.');await report();});
+$('start').onclick=()=>run(async()=>{await json('/api/queue/start');notify('صف فعال شد. تا موعد بعدی به صورت زمان‌بندی شده اجرا می‌شود.');await report();});
+$('pause').onclick=()=>run(async()=>{await json('/api/queue/pause');notify('صف متوقف شد.');await report();});
+$('clear').onclick=()=>run(async()=>{if(!confirm('تمام سابقه صف را حذف کنیم؟'))return;await json('/api/queue/clear');notify('صف حذف شد.');await report();});
+async function download(url,name){const r=await fetch(url,{headers:{Authorization:'Bearer '+token()}});if(!r.ok)throw Error('دانلود ناموفق: '+r.status);const blob=await r.blob();const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
+$('template').onclick=()=>run(()=>download('/api/contacts/template','rubika-contacts-template.csv'));
+$('export').onclick=()=>run(()=>download('/api/jobs/export','rubika-send-results.csv'));
+$('token').value=token();const d=new Date(Date.now()+60*1000);d.setSeconds(0,0);const offset=d.getTimezoneOffset()*60000;$('startAt').value=new Date(d.getTime()-offset).toISOString().slice(0,16);
+if(token())run(report);setInterval(()=>{if(token())report().catch(()=>{});},12000);
+</script></body></html>

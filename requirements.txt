@@ -1,0 +1,6 @@
+fastapi>=0.115,<1
+uvicorn[standard]>=0.30,<1
+python-multipart>=0.0.12,<1
+openpyxl>=3.1,<4
+rubpy==7.3.5
+pycryptodome>=3.20,<4
